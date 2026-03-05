@@ -11,24 +11,24 @@
 import { prisma } from '../config/prisma.js';
 
 export const findUserByEmail = async (email) => {
-  return prisma.user.findUnique({ where: { email } });
+  return prisma.userss.findUnique({ where: { email } });
   // { email } is shorthand for { email: email }
   // Returns the user object or null if not found
 };
 
 export const findUserById = async (id) => {
-  return prisma.user.findUnique({ where: { id } });
+  return prisma.userss.findUnique({ where: { id } });
 };
 
 export const createUser = async (email, hashedPassword) => {
-  return prisma.user.create({
+  return prisma.userss.create({
     data: { email, password: hashedPassword },
     // verified defaults to false — defined in schema
   });
 };
 
 export const verifyUserEmail = async (email) => {
-  return prisma.user.update({
+  return prisma.userss.update({
     where: { email },
     data: {
       verified: true,
@@ -39,7 +39,7 @@ export const verifyUserEmail = async (email) => {
 };
 
 export const saveResetToken = async (email, resetToken, expiry) => {
-  return prisma.user.update({
+  return prisma.userss.update({
     where: { email },
     data: {
       resetToken, // this is a SHA256 hash of the real token
@@ -49,7 +49,7 @@ export const saveResetToken = async (email, resetToken, expiry) => {
 };
 
 export const findUserByResetToken = async (resetToken) => {
-  return prisma.user.findFirst({
+  return prisma.userss.findFirst({
     where: {
       resetToken,
       resetTokenExpiry: { gt: new Date() },
@@ -60,7 +60,7 @@ export const findUserByResetToken = async (resetToken) => {
 };
 
 export const updatePassword = async (userId, hashedPassword) => {
-  return prisma.user.update({
+  return prisma.userss.update({
     where: { id: userId },
     data: {
       password: hashedPassword,

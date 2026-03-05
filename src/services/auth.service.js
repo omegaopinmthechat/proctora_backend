@@ -241,4 +241,4 @@ export default {
   forgotPassword,
   resetPassword,
   getMe,
-} = authService;
+};

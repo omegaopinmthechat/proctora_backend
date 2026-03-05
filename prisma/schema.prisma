@@ -1,39 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  // This tells Prisma: generate a JavaScript client I can use in my code
 }
 
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
 }
-model Users {
-// String primary key, auto-generates a UUID
-  id String @id @default(uuid())
 
-// @unique = PostgreSQL creates an index, duplicate emails throw an error
-  email String @unique
-  
-// We store the bcrypt HASH here
-  password String
+model Userss {
+  id                String    @id @default(uuid())
+  // String primary key, auto-generates a UUID like "a1b2c3d4-..."
 
-// Starts as false. Set to true when user clicks the email link.
-  verified Boolean @default(false)
+  email             String    @unique
+  // @unique = PostgreSQL creates an index, duplicate emails throw an error
 
-// The ? means nullable. We store the JWT token we emailed them.
+  password          String
+  // We store the bcrypt HASH here, never the real password
+
+  verified          Boolean   @default(false)
+  // Starts as false. Set to true when user clicks the email link.
+
   verificationToken String?
+  // The ? means nullable. We store the JWT token we emailed them.
 
-// Nullable. Stores SHA256 hash of the password reset token.
-  resetToken String?
+  resetToken        String?
+  // Nullable. Stores SHA256 hash of the password reset token.
 
-// Nullable. When the reset token expires (1 hour from creation).
-  resetTokenExpiry DateTime?
+  resetTokenExpiry  DateTime?
+  // Nullable. When the reset token expires (1 hour from creation).
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  // @updatedAt = Prisma auto-updates this field on every save
 }

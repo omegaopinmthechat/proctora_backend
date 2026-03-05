@@ -9,6 +9,7 @@
 
 import express from "express";
 import rateLimit from "express-rate-limit";
+import { NODE_ENV } from "../config/env.js";
 
 import {
   register,
@@ -36,16 +37,19 @@ const router = express.Router();
 
 // Rate limiter: max 10 requests per 15 minutes per IP on auth routes
 // Prevents someone writing a script to brute-force passwords
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10,
-  message: {
-    status: "error",
-    message: "Too many attempts. Try again in 15 minutes.",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// DISABLED in development for easier testing
+const authLimiter = NODE_ENV === 'development' 
+  ? (req, res, next) => next() // Skip rate limiting in dev
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 10,
+      message: {
+        status: "error",
+        message: "Too many attempts. Try again in 15 minutes.",
+      },
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
 
 // public routes
 

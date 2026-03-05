@@ -36,10 +36,14 @@ app.get("/health", (req, res) => {
   // Used by Docker, load balancers, uptime monitors to check if server is alive
 });
 
+
 // routes
 app.use("/api/auth", authRoutes);
-// All routes in auth.routes.js are now accessible under /api/auth/...
-// e.g., POST /api/auth/register, POST /api/auth/login
+
+// root
+app.get("/", (req, res) => {
+  res.send("Server for Proctora is running");
+});
 
 app.use((req, res) => {
   res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -52,5 +56,5 @@ app.use((req, res) => {
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  console.log(`erver running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
