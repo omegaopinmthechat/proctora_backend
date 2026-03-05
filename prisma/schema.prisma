@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model Users {
+// String primary key, auto-generates a UUID
+  id String @id @default(uuid())
+
+// @unique = PostgreSQL creates an index, duplicate emails throw an error
+  email String @unique
+  
+// We store the bcrypt HASH here
+  password String
+
+// Starts as false. Set to true when user clicks the email link.
+  verified Boolean @default(false)
+
+// The ? means nullable. We store the JWT token we emailed them.
+  verificationToken String?
+
+// Nullable. Stores SHA256 hash of the password reset token.
+  resetToken String?
+
+// Nullable. When the reset token expires (1 hour from creation).
+  resetTokenExpiry DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
