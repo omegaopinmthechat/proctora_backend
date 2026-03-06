@@ -124,4 +124,4 @@ const sendResultToStudent = async (quiz, submission) => {
   });
 };
 
-export default { sendResultToTeacher, sendResultToStudent };
+export { sendResultToTeacher, sendResultToStudent };

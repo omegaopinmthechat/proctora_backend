@@ -128,4 +128,4 @@ const getQuizSubmissions = async (quizId, user) => {
   return findSubmissionsByQuiz(quizId);
 };
 
-export default { startQuiz, submitQuiz, getQuizSubmissions };
+export { startQuiz, submitQuiz, getQuizSubmissions };

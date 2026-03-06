@@ -38,7 +38,7 @@ const deleteQuiz = async (id) => {
   // Cascade deletes questions → options → answers automatically
 };
 
-export default {
+export {
   createQuiz,
   findQuizById,
   findQuizzesByTeacher,

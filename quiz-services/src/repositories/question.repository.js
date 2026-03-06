@@ -38,7 +38,11 @@ const deleteOption = async (id) => {
   return prisma.option.delete({ where: { id } });
 };
 
-export default {
+const findOptionById = async (id) => {
+  return prisma.option.findUnique({ where: { id } });
+};
+
+export {
   addQuestion,
   findQuestionById,
   updateQuestion,
@@ -46,4 +50,5 @@ export default {
   addOption,
   updateOption,
   deleteOption,
+  findOptionById,
 };

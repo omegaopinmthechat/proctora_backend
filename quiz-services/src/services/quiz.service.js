@@ -7,23 +7,28 @@ import {
 } from "../repositories/quiz.repository.js";
 
 const createNewQuiz = async (input, user) => {
-  // Validate start and end times make sense
-  const start = new Date(input.startTime);
-  const end = new Date(input.endTime);
+  // startTime defaults to right now if teacher doesn't provide one
+  const start = input.startTime ? new Date(input.startTime) : new Date();
 
-  if (end <= start) {
+  // endTime is optional — if not provided, quiz has no closing time
+  const end = input.endTime ? new Date(input.endTime) : null;
+
+  // Only validate end vs start if both are provided
+  if (end && end <= start) {
     const err = new Error("End time must be after start time");
-    err.code = "BAD_USER_INPUT"; // Apollo uses this to set correct HTTP status
+    err.code = "BAD_USER_INPUT";
     throw err;
   }
 
   return createQuiz({
-    ...input,
+    title: input.title,
+    description: input.description ?? null,
+    timeLimit: input.timeLimit,
     startTime: start,
-    endTime: end,
+    endTime: end, // null is fine — schema has endTime as DateTime?
     teacherId: user.id,
     teacherEmail: user.email,
-    published: false, // always starts as draft
+    published: false,
   });
 };
 
@@ -53,15 +58,18 @@ const getActiveQuiz = async (id) => {
   }
 
   const now = new Date();
-  if (now < quiz.startTime) {
+
+  // Check start time — if startTime exists and we haven't reached it yet
+  if (quiz.startTime && now < quiz.startTime) {
     const err = new Error(
-      `Quiz hasn't started yet. Starts at ${quiz.startTime}`,
+      `Quiz hasn't started yet. Starts at ${quiz.startTime.toISOString()}`,
     );
     err.code = "FORBIDDEN";
     throw err;
   }
 
-  if (now > quiz.endTime) {
+  // Check end time — only if endTime was set (null = no closing time)
+  if (quiz.endTime && now > quiz.endTime) {
     const err = new Error("This quiz has ended");
     err.code = "FORBIDDEN";
     throw err;
@@ -140,7 +148,7 @@ const deleteExistingQuiz = async (id, user) => {
   return true;
 };
 
-export default {
+export {
   createNewQuiz,
   getQuiz,
   getActiveQuiz,

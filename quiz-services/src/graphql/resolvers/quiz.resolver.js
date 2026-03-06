@@ -11,7 +11,7 @@ import {
   updateExistingQuiz,
   publishExistingQuiz,
   deleteExistingQuiz,
-} from "../../services/quiz.service";
+} from "../../services/quiz.service.js";
 
 const quizResolvers = {
   Query: {
@@ -62,13 +62,12 @@ const quizResolvers = {
   // submissionCount isn't stored directly — we compute it here
   Quiz: {
     submissionCount: (parent) => {
-      // parent = the quiz object from the database
-      // _count is what Prisma returns when we do: include: { _count: ... }
       return parent._count?.submissions ?? 0;
     },
 
-    startTime: (parent) => parent.startTime.toISOString(),
-    endTime: (parent) => parent.endTime.toISOString(),
+    // Use optional chaining — if null, return null (not crash)
+    startTime: (parent) => parent.startTime?.toISOString() ?? null,
+    endTime: (parent) => parent.endTime?.toISOString() ?? null,
     createdAt: (parent) => parent.createdAt.toISOString(),
     updatedAt: (parent) => parent.updatedAt.toISOString(),
   },

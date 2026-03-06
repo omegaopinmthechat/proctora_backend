@@ -12,7 +12,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { AUTH_SERVICE_URL } from '../config/env.js';
 
 const authProxy = createProxyMiddleware({
-  target: AUTH_SERVICE_URL,
+  target: `${AUTH_SERVICE_URL}/api/auth`,
   // target = where to forward the request to
   // e.g. POST /api/auth/login → forwarded to http://localhost:5501/api/auth/login
 

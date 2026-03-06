@@ -117,7 +117,7 @@ const deleteExistingOption = async (optionId, user) => {
   return true;
 };
 
-export default {
+export {
   addQuestionToQuiz,
   updateQuestionText,
   deleteQuestionById,

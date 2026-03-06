@@ -48,7 +48,7 @@ const createAnswer = async (data) => {
   return prisma.answer.create({ data });
 };
 
-export default {
+export {
   createSubmission,
   findSubmissionById,
   findSubmissionByStudentAndQuiz,

@@ -12,8 +12,8 @@ model Quiz{
     title String
     description String?
     timeLimit Int
-    startTime DateTime
-    endTime DateTime
+    startTime DateTime? @default(now())
+    endTime DateTime?
     teacherId String
     teacherEmail String
     published Boolean @default(false)
@@ -26,7 +26,7 @@ model Quiz{
 model Question{
     id String @id @default(uuid())
     quizId String
-    test String
+    text String
     order Int
     createdAt DateTime @default(now())
     quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
