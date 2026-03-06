@@ -1,10 +1,5 @@
-import nodemailer from "nodemailer";
-import { EMAIL_USER, EMAIL_PASS } from '../config/env.js'; 
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: { user: EMAIL_USER, EMAIL_PASS },
-});
+import transporter from "../utils/mailer.js";
+import { EMAIL_USER } from '../config/env.js';
 
 // ── Teacher email — sent immediately on submission ─────────────────────────
 const sendResultToTeacher = async (quiz, submission) => {

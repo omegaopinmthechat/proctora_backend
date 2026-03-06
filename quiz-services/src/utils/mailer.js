@@ -4,8 +4,8 @@
 // Keeping them separate means if you switch from Gmail to SendGrid
 // later, you only change this file.
 
-import nodemailer from "../utils/mailer.js";
-import { EMAIL_USER, EMAIL_PASS} from '../config/env.js';
+import nodemailer from "nodemailer";
+import { EMAIL_USER, EMAIL_PASS } from '../config/env.js';
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
