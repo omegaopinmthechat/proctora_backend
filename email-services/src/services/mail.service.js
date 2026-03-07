@@ -3,6 +3,7 @@ import { verificationTemplate } from "../templates/verification.js";
 import { passwordResetTemplate } from "../templates/passwordReset.js";
 import { teacherResultTemplate } from "../templates/teacherResult.js";
 import { studentResultTemplate } from "../templates/studentResult.js";
+import { EMAIL_USER } from "../config/env.js";
 
 const TEMPLATES = {
   verification: verificationTemplate,
@@ -25,7 +26,7 @@ export const sendMail = async ({ to, type, data }) => {
   const { subject, html } = templateFn(data);
 
   await transporter.sendMail({
-    from: `"Proctora" <${process.env.EMAIL_USER}>`,
+    from: `"Proctora" <${EMAIL_USER}>`,
     to,
     subject,
     html,
