@@ -18,6 +18,7 @@ model Userss {
   password         String?     // nullable — Google users have no password
   verified         Boolean     @default(false)
   authMethod       AuthMethod  @default(email)
+  terminated       Boolean     @default(false) // if true, user is blocked
 
   // OTP fields
   otp              String?     // hashed 4-digit OTP stored in DB
@@ -29,6 +30,9 @@ model Userss {
   // Password reset token fields
   resetToken       String?
   resetTokenExpiry DateTime?
+
+  // Refresh token stored in DB instead of Redis
+  refreshToken     String?
 
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt

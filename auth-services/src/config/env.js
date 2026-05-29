@@ -12,9 +12,6 @@ export const {
   // Database
   DATABASE_URL,
 
-  // Redis
-  REDIS_URL,
-
   // JWT
   JWT_ACCESS_SECRET,
   JWT_ACCESS_EXPIRES,

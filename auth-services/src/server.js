@@ -10,7 +10,6 @@ import { configurePassport } from "./config/passport.js"
 import authRoutes from "./routes/auth.routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import logger from "./config/logger.js";
-import "./config/redis.js";
 import { FRONTEND_URL, SESSION_SECRET, NODE_ENV, PORT } from "./config/env.js";
 
 const app = express();
