@@ -131,3 +131,19 @@ export const updatePassword = async (userId, hashedPassword) => {
     },
   });
 };
+
+// ── Refresh Token ────────────────────────────────────────────────────────
+
+export const saveRefreshToken = async (userId, refreshToken) => {
+  return prisma.userss.update({
+    where: { id: userId },
+    data: { refreshToken },
+  });
+};
+
+export const clearRefreshToken = async (userId) => {
+  return prisma.userss.update({
+    where: { id: userId },
+    data: { refreshToken: null },
+  });
+};

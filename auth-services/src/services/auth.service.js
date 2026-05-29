@@ -1,7 +1,6 @@
 // src/services/auth.service.js
 
 import crypto from "crypto";
-import {redisClient} from "../config/redis.js";
 import logger from "../config/logger.js";
 import {
   findUserByEmail,
@@ -15,6 +14,8 @@ import {
   saveResetToken,
   findUserByResetToken,
   updatePassword,
+  saveRefreshToken,
+  clearRefreshToken,
 } from "../repositories/user.repository.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
 import {
@@ -30,9 +31,7 @@ const issueTokens = async (userId) => {
   const accessToken = generateAccessToken(userId);
   const refreshToken = generateRefreshToken(userId);
 
-  await redisClient.set(`refresh:${userId}`, refreshToken, {
-    EX: 60 * 60 * 24 * 7,
-  });
+  await saveRefreshToken(userId, refreshToken);
 
   return { accessToken, refreshToken };
 };
@@ -136,6 +135,12 @@ export const login = async (email, password) => {
   if (!user) {
     const err = new Error("Invalid email or password");
     err.statusCode = 401;
+    throw err;
+  }
+
+  if (user.terminated) {
+    const err = new Error("You are blocked");
+    err.statusCode = 403;
     throw err;
   }
 
@@ -338,7 +343,7 @@ export const resetPassword = async (token, newPassword) => {
 
   const hashedPassword = await hashPassword(newPassword);
   await updatePassword(user.id, hashedPassword);
-  await redisClient.del(`refresh:${user.id}`); // logout all devices
+  await clearRefreshToken(user.id); // logout all devices
 
   // Auto login after reset
   const tokens = await issueTokens(user.id);
@@ -356,6 +361,12 @@ export const handleGoogleAuth = async ({ email, name, avatarUrl }) => {
   const existing = await findUserByEmail(email);
 
   if (existing) {
+    if (existing.terminated) {
+      const err = new Error("You are blocked");
+      err.statusCode = 403;
+      throw err;
+    }
+
     if (existing.authMethod === "email") {
       // Email/password account exists — block Google login
       const err = new Error(
@@ -399,10 +410,16 @@ export const refreshAccessToken = async (refreshToken) => {
     throw err;
   }
 
-  const storedToken = await redisClient.get(`refresh:${decoded.id}`);
-  if (!storedToken || storedToken !== refreshToken) {
+  const user = await findUserById(decoded.id);
+  if (!user || user.refreshToken !== refreshToken) {
     const err = new Error("Session expired. Please log in again.");
     err.statusCode = 401;
+    throw err;
+  }
+
+  if (user.terminated) {
+    const err = new Error("You are blocked");
+    err.statusCode = 403;
     throw err;
   }
 
@@ -411,7 +428,7 @@ export const refreshAccessToken = async (refreshToken) => {
 
 // ── LOGOUT ────────────────────────────────────────────────────────────────────
 export const logout = async (userId) => {
-  await redisClient.del(`refresh:${userId}`);
+  await clearRefreshToken(userId);
   logger.info({ userId }, "User logged out");
 };
 
